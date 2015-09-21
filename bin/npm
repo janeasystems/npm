@@ -14,14 +14,15 @@ fi
 
 NPM_CLI_JS="$basedir/node_modules/npm/bin/npm-cli.js"
 
-case `uname` in
-  *CYGWIN*)
-    NPM_PREFIX=`"$NODE_EXE" "$NPM_CLI_JS" prefix -g`
-    NPM_PREFIX_NPM_CLI_JS="$NPM_PREFIX/node_modules/npm/bin/npm-cli.js"
-    if [ -f "$NPM_PREFIX_NPM_CLI_JS" ]; then
-      NPM_CLI_JS="$NPM_PREFIX_NPM_CLI_JS"
-    fi
-    ;;
-esac
+if "$NODE_EXE" -e 'process.exit(process.platform==="win32"?0:1)'; then
+  echo win32
+  NPM_PREFIX=`"$NODE_EXE" "$NPM_CLI_JS" prefix -g`
+  NPM_PREFIX_NPM_CLI_JS="$NPM_PREFIX/node_modules/npm/bin/npm-cli.js"
+  if [ -f "$NPM_PREFIX_NPM_CLI_JS" ]; then
+    NPM_CLI_JS="$NPM_PREFIX_NPM_CLI_JS"
+  fi
+else
+  echo other platform
+fi
 
 "$NODE_EXE" "$NPM_CLI_JS" "$@"
